@@ -8,14 +8,13 @@
 <style>
 :root{
   --pink:#ff6fae;
-  --soft:#ffeaf2;
   --deep:#ff3d8b;
 }
 
 body{
   margin:0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg,#ffeaf2,#ffd6e7);
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#ffeaf2,#ffd6e7);
   display:flex;
   justify-content:center;
   align-items:center;
@@ -29,15 +28,15 @@ body{
   max-width:320px;
   padding:25px;
   border-radius:25px;
-  backdrop-filter: blur(10px);
-  background: rgba(255,255,255,0.6);
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(10px);
   box-shadow:0 10px 30px rgba(0,0,0,0.15);
   text-align:center;
-  animation:fadeIn 0.5s ease;
+  animation:fade 0.5s ease;
 }
 .hidden{display:none;}
 
-@keyframes fadeIn{
+@keyframes fade{
   from{opacity:0; transform:translateY(20px);}
   to{opacity:1; transform:translateY(0);}
 }
@@ -51,9 +50,7 @@ button{
   background:linear-gradient(45deg,var(--pink),var(--deep));
   color:white;
   cursor:pointer;
-  transition:0.3s;
 }
-button:hover{transform:scale(1.05);}
 
 /* FOTO */
 .foto{
@@ -64,52 +61,29 @@ button:hover{transform:scale(1.05);}
   box-shadow:0 0 15px pink;
 }
 
-/* COUNTDOWN */
+/* COUNT */
 .count{
   font-size:60px;
-  font-weight:bold;
   color:var(--deep);
 }
 
-/* PROGRESS */
-.bar{
-  height:6px;
-  background:#ffd1e5;
-  border-radius:10px;
-  margin-bottom:10px;
-  overflow:hidden;
-}
-.fill{
-  height:100%;
-  width:0%;
-  background:var(--deep);
-  transition:0.4s;
+/* GLOW TEXT */
+.glow{
+  color:#ff1493;
+  text-shadow:
+    0 0 5px #ff69b4,
+    0 0 10px #ff69b4,
+    0 0 20px #ff1493;
 }
 
-/* HEARTS */
-.heart{
-  position:fixed;
-  bottom:-10px;
-  font-size:16px;
-  animation:float 6s linear infinite;
+/* JEDAG */
+.jedag{
+  animation:jedag 0.15s;
 }
-@keyframes float{
-  to{transform:translateY(-110vh);}
-}
-
-/* FLOWER */
-.flower{
-  font-size:50px;
-  animation:bloom 1s infinite alternate;
-}
-@keyframes bloom{
-  from{transform:scale(1);}
-  to{transform:scale(1.2);}
-}
-
-/* TEXT */
-.typing{
-  min-height:40px;
+@keyframes jedag{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.05);}
+  100%{transform:scale(1);}
 }
 
 /* STAR */
@@ -122,32 +96,24 @@ button:hover{transform:scale(1.05);}
 
 <body>
 
-<audio id="musik" autoplay loop>
+<!-- MUSIK -->
+<audio id="musik" loop>
 <source src="https://files.catbox.moe/9l4k7v.mp3">
 </audio>
 
-<script>
-/* HEART FLOAT */
-for(let i=0;i<15;i++){
- let h=document.createElement("div");
- h.innerHTML="💖";
- h.className="heart";
- h.style.left=Math.random()*100+"%";
- h.style.animationDuration=(4+Math.random()*4)+"s";
- document.body.appendChild(h);
-}
-</script>
+<!-- SOUND TYPING -->
+<audio id="typingSound">
+<source src="https://www.soundjay.com/mechanical/keyboard-1.mp3">
+</audio>
 
 <!-- STEP -->
 <div class="card" id="step1">
-<div class="bar"><div class="fill" id="p1"></div></div>
 <h3>💌 Hai kamu</h3>
 <p>Ada sesuatu spesial 😳</p>
-<button onclick="next(2)">Buka</button>
+<button onclick="startApp()">Buka</button>
 </div>
 
 <div class="card hidden" id="step2">
-<div class="bar"><div class="fill" id="p2"></div></div>
 <h3>Masukkan Nama 🎀</h3>
 <input id="nama">
 <br>
@@ -160,7 +126,7 @@ for(let i=0;i<15;i++){
 
 <div class="card hidden" id="step4">
 <img src="photo.jpeg" class="foto">
-<p id="t1" class="typing"></p>
+<p id="t1" class="glow"></p>
 <button onclick="next(5)">Lanjut</button>
 </div>
 
@@ -174,8 +140,7 @@ for(let i=0;i<15;i++){
 </div>
 
 <div class="card hidden" id="step7">
-<div class="flower">🌸</div>
-<p id="t2"></p>
+<p id="t2" class="glow"></p>
 <button onclick="next(8)">Lanjut</button>
 </div>
 
@@ -187,13 +152,19 @@ for(let i=0;i<15;i++){
 <script>
 let nama="",star=0,done=false;
 
+/* START APP (biar musik bisa play) */
+function startApp(){
+document.getElementById("musik").play();
+next(2);
+}
+
 /* NAV */
 function next(s){
 document.querySelectorAll(".card").forEach(x=>x.classList.add("hidden"));
 document.getElementById("step"+s).classList.remove("hidden");
 }
 
-/* START */
+/* COUNTDOWN */
 function start(){
 nama=document.getElementById("nama").value;
 next(3);
@@ -209,22 +180,43 @@ setTimeout(run,900);
 }else{
 confetti();
 next(4);
-type("t1","Happy Birthday Naeli 🎂💖 Selamat ulang tahun jangan terus meragukan diri sendiri kamu sudah cukup hebat selama ini✨");
+setTimeout(()=>{
+type("t1","Happy Birthday Naeli 🎂💖 Kamu itu kuat, lebih dari yang kamu kira ✨");
+},500);
 }}
 run();
 }
 
-/* TYPE */
+/* TYPE EFFECT */
 function type(id,text){
 let i=0;
 let el=document.getElementById(id);
+let sound=document.getElementById("typingSound");
+
 el.innerHTML="";
+
 function t(){
-if(i<text.length){
-el.innerHTML+=text[i];
-i++;
-setTimeout(t,30);
-}}
+ if(i<text.length){
+   el.innerHTML+=text[i];
+
+   // SOUND tiap 2 huruf (biar ga berisik)
+   if(i%2===0){
+     sound.currentTime=0;
+     sound.play();
+   }
+
+   // JEDAG
+   el.classList.add("jedag");
+   setTimeout(()=>el.classList.remove("jedag"),100);
+
+   let delay=35;
+   if(text[i]===" " ) delay=15;
+   if(text[i]==="."||text[i]===",") delay=250;
+
+   i++;
+   setTimeout(t,delay);
+ }
+}
 t();
 }
 
@@ -234,16 +226,18 @@ for(let i=0;i<5;i++){
 let s=document.createElement("span");
 s.innerHTML="⭐";
 s.className="star";
+
 s.onclick=function(){
 if(done)return;
 star++;
 s.style.opacity="0.5";
+
 if(star===5){
 done=true;
 next(6);
 setTimeout(()=>{
 next(7);
-type("t2","Untuk Naeli, jangan pernah patah semangat. 🌟 Dunia mungkin terasa berat, tapi ingatlah bahwa diam tanpa usaha hanya akan menjauhkanmu dari mimpi. Teruslah melangkah, banyak senyum dan harapan orang-orang yang kamu sayangi untuk kamu kamu bahagiakan. Semoga semesta memeluk mimpimu dan menjadikannya nyata 💕✨");
+type("t2","Jangan pernah menyerah ya... semua impianmu akan tercapai 💕✨");
 },1500);
 }}
 box.appendChild(s);
@@ -257,7 +251,7 @@ m.paused?m.play():m.pause();
 
 /* CONFETTI */
 function confetti(){
-for(let i=0;i<30;i++){
+for(let i=0;i<20;i++){
 let c=document.createElement("div");
 c.innerHTML="✨";
 c.style.position="fixed";
